@@ -121,7 +121,7 @@ Module.
 ### Requisitos Previos
 
 - Node.js 18+
-- pnpm (package manager recomendado)
+- npm (package manager recomendado)
 
 ### Instalación
 
@@ -130,20 +130,20 @@ Module.
 cd apps/website-corporate
 
 # Instalar dependencias
-pnpm install
+npm install
 
 # Iniciar servidor de desarrollo
-pnpm run dev
+npm run dev
 ```
 
 ### Scripts Disponibles
 
 ```bash
-pnpm run dev          # Servidor de desarrollo (http://localhost:5173)
-pnpm run build        # Build de producción
-pnpm run preview      # Preview del build
-pnpm run type-check   # Verificación TypeScript
-pnpm run lint         # Linting con ESLint
+npm run dev          # Servidor de desarrollo (http://localhost:5173)
+npm run build        # Build de producción
+npm run preview      # Preview del build
+npm run type-check   # Verificación TypeScript
+npm run lint         # Linting con ESLint
 ```
 
 ## 🏗️ Estado de Desarrollo
