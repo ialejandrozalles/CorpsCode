@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface OptimizedImageProps {
@@ -10,7 +10,6 @@ interface OptimizedImageProps {
   height?: number;
   priority?: boolean;
   objectFit?: 'cover' | 'contain' | 'fill';
-  placeholder?: string;
   overlay?: boolean;
   overlayOpacity?: number;
 }
@@ -24,38 +23,27 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   height,
   priority = false,
   objectFit = 'cover',
-  placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMGYwZjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMGUwZTAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+',
   overlay = false,
   overlayOpacity = 0.3,
 }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(priority);
   const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(placeholder);
 
-  useEffect(() => {
-    if (!priority) {
-      // Lazy loading simulation
-      const img = new Image();
-      img.onload = () => {
-        setImageSrc(src);
-        setImageLoaded(true);
-      };
-      img.onerror = () => {
-        setImageError(true);
-      };
-      img.src = src;
-    } else {
-      setImageSrc(src);
-      setImageLoaded(true);
-    }
-  }, [src, priority]);
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
 
   const imageStyle: React.CSSProperties = {
     width: width ? `${width}px` : '100%',
     height: height ? `${height}px` : '100%',
     objectFit,
     transition: 'opacity 0.3s ease-in-out',
-    opacity: imageLoaded ? 1 : 0.7,
+    opacity: imageLoaded && !imageError ? 1 : 0.7,
     ...style,
   };
 
@@ -76,6 +64,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          border: '1px solid #ddd',
+          borderRadius: '8px',
         }}
       >
         <span style={{ color: '#999', fontSize: '14px' }}>Imagen no disponible</span>
@@ -86,13 +76,15 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <div className={className} style={containerStyle}>
       <motion.img
-        src={imageSrc}
+        src={src}
         alt={alt}
         style={imageStyle}
         initial={{ opacity: 0 }}
         animate={{ opacity: imageLoaded ? 1 : 0.7 }}
         transition={{ duration: 0.3 }}
-        onLoad={() => setImageLoaded(true)}
+        onLoad={handleImageLoad}
+        onError={handleImageError}
+        loading={priority ? 'eager' : 'lazy'}
       />
       {overlay && (
         <div
